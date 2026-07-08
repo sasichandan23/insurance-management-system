@@ -1,0 +1,47 @@
+@startuml 04-sequence-policy
+title Sequence Diagram - Policy Application and Approval Workflow
+skinparam sequence {
+  ParticipantBackgroundColor #EAF2F8
+  ParticipantBorderColor #2E75B6
+  ArrowColor #1F4E79
+  LifeLineBorderColor #2E75B6
+}
+
+actor Customer
+actor Agent
+participant "React App" as UI
+participant "PolicyController" as C
+participant "PolicyService" as S
+participant "Repositories" as R
+database "MySQL" as DB
+
+== Policy Application ==
+Customer -> UI : Select plan, fill application form
+UI -> C : POST /api/policies {planId, details}
+C -> S : applyForPolicy(dto, customerId)
+S -> R : validate plan is ACTIVE
+S -> S : Generate unique policy number\nstatus = PENDING
+S -> R : save(policy)
+R -> DB : INSERT INTO policies
+S -> R : save(notification for agent)
+S --> C : PolicyResponseDTO
+C --> UI : 201 Created
+UI --> Customer : "Application submitted (PENDING)"
+
+== Policy Approval ==
+Agent -> UI : Open pending applications queue
+UI -> C : PUT /api/policies/{id}/approve {decision, remarks}
+C -> S : decidePolicy(id, decision, agentId)
+S -> S : Verify agent is assigned\nto this customer
+alt approved
+  S -> S : status = ACTIVE\ncompute startDate, endDate
+  S -> R : save(policy), create premium dues,\nnotification for customer
+  S --> C : PolicyResponseDTO (ACTIVE)
+else rejected
+  S -> S : status = REJECTED + remarks
+  S -> R : save(policy), notification for customer
+  S --> C : PolicyResponseDTO (REJECTED)
+end
+C --> UI : 200 OK
+UI --> Agent : Decision recorded
+@enduml

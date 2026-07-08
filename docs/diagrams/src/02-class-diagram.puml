@@ -1,0 +1,142 @@
+@startuml 02-class-diagram
+!pragma layout smetana
+title Insurance Management System - Class Diagram (Domain Model)
+skinparam class {
+  BackgroundColor #EAF2F8
+  BorderColor #2E75B6
+  ArrowColor #1F4E79
+}
+
+enum Role {
+  ADMIN
+  AGENT
+  CUSTOMER
+}
+
+enum InsuranceType {
+  LIFE
+  HEALTH
+  MOTOR
+  HOME
+}
+
+enum PolicyStatus {
+  PENDING
+  ACTIVE
+  REJECTED
+  EXPIRED
+  CANCELLED
+}
+
+enum ClaimStatus {
+  FILED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  SETTLED
+}
+
+enum PaymentStatus {
+  DUE
+  PAID
+  OVERDUE
+}
+
+class User {
+  -Long id
+  -String name
+  -String email
+  -String passwordHash
+  -Role role
+  -String phone
+  -String address
+  -LocalDate dob
+  -boolean active
+  +register()
+  +login()
+  +updateProfile()
+}
+
+class AgentAssignment {
+  -Long id
+  -User agent
+  -User customer
+  -LocalDateTime assignedAt
+}
+
+class Plan {
+  -Long id
+  -String name
+  -InsuranceType insuranceType
+  -String description
+  -BigDecimal coverageAmount
+  -BigDecimal premiumAmount
+  -PremiumFrequency premiumFrequency
+  -int durationYears
+  -boolean active
+}
+
+class Policy {
+  -Long id
+  -String policyNumber
+  -User customer
+  -Plan plan
+  -PolicyStatus status
+  -LocalDate startDate
+  -LocalDate endDate
+  -String detailsJson
+  -String remarks
+  +approve()
+  +reject()
+  +cancel()
+  +expire()
+}
+
+class Claim {
+  -Long id
+  -String claimNumber
+  -Policy policy
+  -BigDecimal claimAmount
+  -LocalDate incidentDate
+  -String description
+  -ClaimStatus status
+  -String reviewerRemarks
+  -BigDecimal settledAmount
+  -LocalDate settledDate
+  +review()
+  +settle()
+}
+
+class Payment {
+  -Long id
+  -Policy policy
+  -LocalDate dueDate
+  -LocalDate paidDate
+  -BigDecimal amount
+  -String transactionRef
+  -PaymentStatus status
+  +pay()
+}
+
+class Notification {
+  -Long id
+  -User user
+  -String title
+  -String message
+  -boolean read
+  -LocalDateTime createdAt
+}
+
+User "1" -- "0..*" Policy : owns >
+Plan "1" -- "0..*" Policy : instantiated as >
+Policy "1" -- "0..*" Claim : has >
+Policy "1" -- "0..*" Payment : has >
+User "1" -- "0..*" Notification : receives >
+User "1 agent" -- "0..*" AgentAssignment
+User "1 customer" -- "0..1" AgentAssignment
+User ..> Role
+Plan ..> InsuranceType
+Policy ..> PolicyStatus
+Claim ..> ClaimStatus
+Payment ..> PaymentStatus
+@enduml

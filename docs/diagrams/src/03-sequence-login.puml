@@ -1,0 +1,37 @@
+@startuml 03-sequence-login
+title Sequence Diagram - User Login with JWT Authentication
+skinparam sequence {
+  ParticipantBackgroundColor #EAF2F8
+  ParticipantBorderColor #2E75B6
+  ArrowColor #1F4E79
+  LifeLineBorderColor #2E75B6
+}
+
+actor User
+participant "React App\n(Login Page)" as UI
+participant "AuthController" as C
+participant "AuthService" as S
+participant "UserRepository" as R
+database "MySQL" as DB
+
+User -> UI : Enter email & password
+UI -> UI : Validate form (required, email format)
+UI -> C : POST /api/auth/login {email, password}
+C -> S : login(LoginRequestDTO)
+S -> R : findByEmail(email)
+R -> DB : SELECT * FROM users WHERE email = ?
+DB --> R : user row
+R --> S : User entity
+S -> S : BCrypt.matches(password, passwordHash)
+alt credentials valid & account active
+  S -> S : Generate JWT (subject=email,\nclaims: role, userId, expiry 24h)
+  S --> C : AuthResponseDTO {token, role, name}
+  C --> UI : 200 OK {token, role, name}
+  UI -> UI : Store token, set Authorization header
+  UI --> User : Redirect to role-based dashboard
+else invalid credentials
+  S --> C : throws BadCredentialsException
+  C --> UI : 401 Unauthorized {error message}
+  UI --> User : Show "Invalid email or password"
+end
+@enduml

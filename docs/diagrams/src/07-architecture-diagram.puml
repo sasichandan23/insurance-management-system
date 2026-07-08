@@ -1,0 +1,46 @@
+@startuml 07-architecture-diagram
+!pragma layout smetana
+title Insurance Management System - Three-Tier Architecture
+skinparam component {
+  BackgroundColor #EAF2F8
+  BorderColor #2E75B6
+}
+skinparam database {
+  BackgroundColor #FDF2E9
+  BorderColor #CA6F1E
+}
+
+actor "Admin /\nAgent /\nCustomer" as Users
+
+package "Presentation Tier (React SPA)" {
+  [Login & Register Pages] as LP
+  [Role-Based Dashboards] as DB1
+  [CRUD Screens\n(Plans, Policies, Claims, Payments)] as CS
+  [Axios HTTP Client\n(JWT in Authorization header)] as AX
+}
+
+package "Application Tier (Spring Boot)" {
+  [JWT Auth Filter\n(Spring Security)] as JF
+  [Controllers\n(REST + DTOs)] as CTRL
+  [Services\n(Business Logic, Transactions)] as SVC
+  [Repositories\n(Spring Data JPA)] as REPO
+  [Global Exception Handler] as GEH
+}
+
+database "Data Tier\nMySQL 8" {
+  [users, plans, policies,\nclaims, payments,\nagent_assignments,\nnotifications] as TBL
+}
+
+Users --> LP
+Users --> DB1
+Users --> CS
+LP --> AX
+DB1 --> AX
+CS --> AX
+AX --> JF : "HTTPS / JSON\nREST API calls"
+JF --> CTRL : authenticated request\n(role verified)
+CTRL --> SVC : DTOs
+SVC --> REPO : entities
+REPO --> TBL : "JDBC / Hibernate"
+CTRL ..> GEH : exceptions
+@enduml

@@ -1,0 +1,103 @@
+@startuml 06-er-diagram
+!pragma layout smetana
+title Insurance Management System - ER Diagram
+hide circle
+skinparam linetype ortho
+skinparam entity {
+  BackgroundColor #EAF2F8
+  BorderColor #2E75B6
+}
+
+entity "users" as users {
+  * **id** : BIGINT <<PK>>
+  --
+  * name : VARCHAR(100)
+  * email : VARCHAR(150) <<UNIQUE>>
+  * password_hash : VARCHAR(255)
+  * role : ENUM(ADMIN, AGENT, CUSTOMER)
+  phone : VARCHAR(15)
+  address : VARCHAR(255)
+  dob : DATE
+  * active : BOOLEAN
+  * created_at : DATETIME
+}
+
+entity "agent_assignments" as aa {
+  * **id** : BIGINT <<PK>>
+  --
+  * agent_id : BIGINT <<FK users>>
+  * customer_id : BIGINT <<FK users, UNIQUE>>
+  * assigned_at : DATETIME
+}
+
+entity "plans" as plans {
+  * **id** : BIGINT <<PK>>
+  --
+  * name : VARCHAR(100)
+  * insurance_type : ENUM(LIFE, HEALTH, MOTOR, HOME)
+  description : TEXT
+  * coverage_amount : DECIMAL(15,2)
+  * premium_amount : DECIMAL(10,2)
+  * premium_frequency : ENUM(MONTHLY, QUARTERLY, YEARLY)
+  * duration_years : INT
+  * active : BOOLEAN
+}
+
+entity "policies" as policies {
+  * **id** : BIGINT <<PK>>
+  --
+  * policy_number : VARCHAR(30) <<UNIQUE>>
+  * customer_id : BIGINT <<FK users>>
+  * plan_id : BIGINT <<FK plans>>
+  * status : ENUM(PENDING, ACTIVE, REJECTED, EXPIRED, CANCELLED)
+  start_date : DATE
+  end_date : DATE
+  details_json : JSON
+  remarks : VARCHAR(255)
+  * applied_at : DATETIME
+}
+
+entity "claims" as claims {
+  * **id** : BIGINT <<PK>>
+  --
+  * claim_number : VARCHAR(30) <<UNIQUE>>
+  * policy_id : BIGINT <<FK policies>>
+  * claim_amount : DECIMAL(15,2)
+  * incident_date : DATE
+  * description : TEXT
+  * status : ENUM(FILED, UNDER_REVIEW, APPROVED, REJECTED, SETTLED)
+  reviewer_remarks : VARCHAR(255)
+  settled_amount : DECIMAL(15,2)
+  settled_date : DATE
+  * filed_at : DATETIME
+}
+
+entity "payments" as payments {
+  * **id** : BIGINT <<PK>>
+  --
+  * policy_id : BIGINT <<FK policies>>
+  * due_date : DATE
+  paid_date : DATE
+  * amount : DECIMAL(10,2)
+  transaction_ref : VARCHAR(40) <<UNIQUE>>
+  * status : ENUM(DUE, PAID, OVERDUE)
+}
+
+entity "notifications" as notif {
+  * **id** : BIGINT <<PK>>
+  --
+  * user_id : BIGINT <<FK users>>
+  * title : VARCHAR(100)
+  * message : VARCHAR(500)
+  * is_read : BOOLEAN
+  * created_at : DATETIME
+}
+
+users ||--o{ policies : "applies for"
+plans ||--o{ policies : "offered as"
+policies ||--o{ claims : "raises"
+policies ||--o{ payments : "pays"
+users ||--o{ notif : "receives"
+users ||--o{ aa : "agent side"
+users ||--o| aa : "customer side"
+@enduml

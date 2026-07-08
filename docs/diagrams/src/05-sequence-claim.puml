@@ -1,0 +1,46 @@
+@startuml 05-sequence-claim
+title Sequence Diagram - Claim Filing, Review and Settlement
+skinparam sequence {
+  ParticipantBackgroundColor #EAF2F8
+  ParticipantBorderColor #2E75B6
+  ArrowColor #1F4E79
+  LifeLineBorderColor #2E75B6
+}
+
+actor Customer
+actor Agent
+actor Admin
+participant "React App" as UI
+participant "ClaimController" as C
+participant "ClaimService" as S
+database "MySQL" as DB
+
+== File Claim ==
+Customer -> UI : Fill claim form (policy, amount,\nincident date, description)
+UI -> C : POST /api/claims
+C -> S : fileClaim(dto, customerId)
+S -> S : Verify policy is ACTIVE and\nclaimAmount <= coverageAmount
+alt valid claim
+  S -> DB : INSERT claim (status = FILED)\n+ notification for agent
+  S --> C : ClaimResponseDTO
+  C --> UI : 201 Created
+else business rule violated
+  S --> C : throws BusinessException
+  C --> UI : 400 Bad Request {message}
+end
+
+== Agent Review ==
+Agent -> UI : Open claim queue
+UI -> C : PUT /api/claims/{id}/review {status, remarks}
+C -> S : reviewClaim(id, decision, agentId)
+S -> DB : UPDATE claim (UNDER_REVIEW ->\nAPPROVED / REJECTED) + notification
+C --> UI : 200 OK
+
+== Admin Settlement ==
+Admin -> UI : Open approved claims
+UI -> C : PUT /api/claims/{id}/settle {settledAmount}
+C -> S : settleClaim(id, amount)
+S -> DB : UPDATE claim (status = SETTLED,\nsettled_amount, settled_date)\n+ notification for customer
+C --> UI : 200 OK
+UI --> Customer : Notification: "Claim settled"
+@enduml
