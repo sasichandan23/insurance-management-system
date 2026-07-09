@@ -25,3 +25,6 @@ Thumbs.db
 # --- Environment / secrets ---
 *.env
 application-local.properties
+
+# Claude session config
+.claude/
