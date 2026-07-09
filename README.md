@@ -39,20 +39,50 @@ insurance-management-system/
 ## Development Roadmap
 
 - [x] **Phase 1 — Planning & Design**: SRS, UML diagrams, ER diagram, database schema
-- [ ] **Phase 2 — Backend**: Spring Boot entities, repositories, services, controllers, JWT security
+- [x] **Phase 2 — Backend**: Spring Boot entities, repositories, services, controllers, JWT security
 - [ ] **Phase 3 — Frontend**: React authentication, dashboards, CRUD screens
 - [ ] **Phase 4 — Integration**: connect React to Spring Boot, end-to-end API testing
 - [ ] **Phase 5 — Deployment & Documentation**: final docs, screenshots, demo
 
 ## Getting Started
 
-> Full setup instructions will be added as Phases 2–4 are completed.
+### Prerequisites
+- JDK 17 or later
+- MySQL 8 Community Edition (running on `localhost:3306`)
+- Node.js 18+ (for the frontend)
 
-1. **Database**: install MySQL 8 Community Edition and run `database/schema.sql`
-2. **Backend** (Phase 2): `cd backend && mvn spring-boot:run` — API at `http://localhost:8080`
-3. **Frontend** (Phase 3): `cd frontend && npm install && npm run dev` — UI at `http://localhost:5173`
+### Backend
+```bash
+cd backend
+mvnw spring-boot:run          # Windows (use ./mvnw on Linux/macOS)
+```
+- API base URL: `http://localhost:8081/api`
+- Swagger UI (interactive API documentation): `http://localhost:8081/swagger-ui.html`
+- The database `insurance_db` and all tables are created automatically on first run
+- Override DB credentials with environment variables `DB_USERNAME` / `DB_PASSWORD` (defaults: `root` / local dev password in `application.properties`)
 
-Default admin login (seeded): `admin@ims.com` / `Admin@123`
+### Frontend (Phase 3)
+```bash
+cd frontend
+npm install
+npm run dev                   # UI at http://localhost:5173
+```
+
+Default admin login (seeded automatically): `admin@ims.com` / `Admin@123`
+
+## API Overview
+
+| Area | Base Endpoint | Highlights |
+|------|---------------|------------|
+| Auth | `/api/auth` | `POST /register`, `POST /login` → JWT |
+| Users | `/api/users` | Admin CRUD, agent creation, profile & password |
+| Plans | `/api/plans` | Browse/filter; admin manages catalogue |
+| Policies | `/api/policies` | Apply, approve/reject, cancel, list by role |
+| Claims | `/api/claims` | File, review (agent), settle (admin) |
+| Payments | `/api/payments` | Simulated premium payment, history |
+| Assignments | `/api/assignments` | Admin assigns agents to customers |
+| Notifications | `/api/notifications` | In-app notifications, unread count |
+| Dashboard | `/api/dashboard/summary` | Role-specific statistics |
 
 ## Documentation
 
