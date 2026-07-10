@@ -40,8 +40,8 @@ insurance-management-system/
 
 - [x] **Phase 1 — Planning & Design**: SRS, UML diagrams, ER diagram, database schema
 - [x] **Phase 2 — Backend**: Spring Boot entities, repositories, services, controllers, JWT security
-- [ ] **Phase 3 — Frontend**: React authentication, dashboards, CRUD screens
-- [ ] **Phase 4 — Integration**: connect React to Spring Boot, end-to-end API testing
+- [x] **Phase 3 — Frontend**: React authentication, dashboards, CRUD screens
+- [x] **Phase 4 — Integration**: connect React to Spring Boot, end-to-end API testing
 - [ ] **Phase 5 — Deployment & Documentation**: final docs, screenshots, demo
 
 ## Getting Started
