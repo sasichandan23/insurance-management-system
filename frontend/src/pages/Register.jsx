@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { apiError } from "../api/client";
+import AuthLayout from "../components/AuthLayout";
 import FormField from "../components/FormField";
 
 const EMPTY = {
@@ -21,6 +22,7 @@ export default function Register() {
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const set = (key) => (e) => setForm({ ...form, [key]: e.target.value });
 
@@ -57,14 +59,18 @@ export default function Register() {
   };
 
   return (
-    <div className="auth-page">
-      <div className="auth-card auth-card-wide">
-        <div className="auth-brand">
-          <span className="brand-icon">🛡️</span>
-          <h1>InsureDesk</h1>
+    <AuthLayout>
+      <div className="form-card form-card-wide">
+        <div className="form-brand-mobile">
+          <span>🛡️</span> InsureDesk
         </div>
-        <h2>Create your customer account</h2>
-        {serverError && <div className="alert alert-error">{serverError}</div>}
+        <h2 className="form-heading">Create your account 🚀</h2>
+        <p className="form-subtext">
+          Join InsureDesk and protect what matters in just a few clicks.
+        </p>
+
+        {serverError && <div className="alert alert-error shake">{serverError}</div>}
+
         <form onSubmit={handleSubmit} noValidate>
           <div className="form-grid">
             <FormField label="Full Name *" error={errors.name}>
@@ -74,10 +80,30 @@ export default function Register() {
               <input type="email" value={form.email} onChange={set("email")} placeholder="you@example.com" />
             </FormField>
             <FormField label="Password *" error={errors.password}>
-              <input type="password" value={form.password} onChange={set("password")} placeholder="Min 8 characters" />
+              <div className="input-icon-wrap no-left-icon">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={form.password}
+                  onChange={set("password")}
+                  placeholder="Min 8 characters"
+                />
+                <button
+                  type="button"
+                  className="input-eye"
+                  title={showPassword ? "Hide password" : "Show password"}
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? "🙈" : "👁️"}
+                </button>
+              </div>
             </FormField>
             <FormField label="Confirm Password *" error={errors.confirmPassword}>
-              <input type="password" value={form.confirmPassword} onChange={set("confirmPassword")} placeholder="Repeat password" />
+              <input
+                type={showPassword ? "text" : "password"}
+                value={form.confirmPassword}
+                onChange={set("confirmPassword")}
+                placeholder="Repeat password"
+              />
             </FormField>
             <FormField label="Phone" error={errors.phone}>
               <input value={form.phone} onChange={set("phone")} placeholder="10-digit mobile number" />
@@ -89,14 +115,16 @@ export default function Register() {
           <FormField label="Address" error={errors.address}>
             <input value={form.address} onChange={set("address")} placeholder="Your address" />
           </FormField>
-          <button className="btn btn-primary btn-block" disabled={loading}>
-            {loading ? "Creating account..." : "Create Account"}
+          <button className="btn btn-primary btn-block btn-glow" disabled={loading}>
+            {loading ? "Creating account..." : "Create Account →"}
           </button>
         </form>
-        <p className="auth-switch">
-          Already registered? <Link to="/login">Sign in</Link>
-        </p>
+
+        <div className="form-divider"><span>Already registered?</span></div>
+        <Link to="/login" className="btn btn-outline btn-block">
+          Sign in instead
+        </Link>
       </div>
-    </div>
+    </AuthLayout>
   );
 }

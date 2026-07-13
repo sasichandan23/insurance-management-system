@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { apiError } from "../api/client";
+import AuthLayout from "../components/AuthLayout";
 import FormField from "../components/FormField";
 
 export default function Login() {
@@ -11,6 +12,7 @@ export default function Login() {
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const validate = () => {
     const e = {};
@@ -37,40 +39,57 @@ export default function Login() {
   };
 
   return (
-    <div className="auth-page">
-      <div className="auth-card">
-        <div className="auth-brand">
-          <span className="brand-icon">🛡️</span>
-          <h1>InsureDesk</h1>
-          <p>Insurance Management System</p>
+    <AuthLayout>
+      <div className="form-card">
+        <div className="form-brand-mobile">
+          <span>🛡️</span> InsureDesk
         </div>
-        <h2>Sign in to your account</h2>
-        {serverError && <div className="alert alert-error">{serverError}</div>}
+        <h2 className="form-heading">Welcome back 👋</h2>
+        <p className="form-subtext">Sign in to manage your policies, claims and payments.</p>
+
+        {serverError && <div className="alert alert-error shake">{serverError}</div>}
+
         <form onSubmit={handleSubmit} noValidate>
           <FormField label="Email" error={errors.email}>
-            <input
-              type="email"
-              value={form.email}
-              placeholder="you@example.com"
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-            />
+            <div className="input-icon-wrap">
+              <span className="input-icon">✉️</span>
+              <input
+                type="email"
+                value={form.email}
+                placeholder="you@example.com"
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+              />
+            </div>
           </FormField>
           <FormField label="Password" error={errors.password}>
-            <input
-              type="password"
-              value={form.password}
-              placeholder="Your password"
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
-            />
+            <div className="input-icon-wrap">
+              <span className="input-icon">🔒</span>
+              <input
+                type={showPassword ? "text" : "password"}
+                value={form.password}
+                placeholder="Your password"
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+              />
+              <button
+                type="button"
+                className="input-eye"
+                title={showPassword ? "Hide password" : "Show password"}
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "🙈" : "👁️"}
+              </button>
+            </div>
           </FormField>
-          <button className="btn btn-primary btn-block" disabled={loading}>
-            {loading ? "Signing in..." : "Sign In"}
+          <button className="btn btn-primary btn-block btn-glow" disabled={loading}>
+            {loading ? "Signing in..." : "Sign In →"}
           </button>
         </form>
-        <p className="auth-switch">
-          New customer? <Link to="/register">Create an account</Link>
-        </p>
+
+        <div className="form-divider"><span>New to InsureDesk?</span></div>
+        <Link to="/register" className="btn btn-outline btn-block">
+          Create a free account
+        </Link>
       </div>
-    </div>
+    </AuthLayout>
   );
 }
