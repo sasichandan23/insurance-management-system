@@ -1,6 +1,8 @@
 import axios from "axios";
 
-export const API_BASE = "http://localhost:8081/api";
+// Configurable at build time via VITE_API_BASE (see Dockerfile / .env);
+// falls back to the local backend for development.
+export const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8081/api";
 
 const client = axios.create({ baseURL: API_BASE });
 

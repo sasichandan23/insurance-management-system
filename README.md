@@ -42,7 +42,7 @@ insurance-management-system/
 - [x] **Phase 2 — Backend**: Spring Boot entities, repositories, services, controllers, JWT security
 - [x] **Phase 3 — Frontend**: React authentication, dashboards, CRUD screens
 - [x] **Phase 4 — Integration**: connect React to Spring Boot, end-to-end API testing
-- [ ] **Phase 5 — Deployment & Documentation**: final docs, screenshots, demo
+- [x] **Phase 5 — Deployment & Documentation**: Docker + free-hosting config, deployment guide, API docs, final report
 
 ## Getting Started
 
@@ -84,8 +84,15 @@ Default admin login (seeded automatically): `admin@ims.com` / `Admin@123`
 | Notifications | `/api/notifications` | In-app notifications, unread count |
 | Dashboard | `/api/dashboard/summary` | Role-specific statistics |
 
+## Deployment
+
+See **[DEPLOYMENT.md](DEPLOYMENT.md)** for local run, one-command Docker (`docker compose up`), and a step-by-step **free cloud deployment** guide (TiDB Cloud + Render + Vercel, no credit card).
+
 ## Documentation
 
 - [Software Requirements Specification](docs/SRS-Insurance-Management-System.docx)
 - [Design Document — UML & ER Diagrams](docs/Design-Document-UML-ER.docx)
+- [API Documentation](docs/API-Documentation.docx)
+- [Final Project Report](docs/Final-Project-Report.docx)
+- [Screenshots Document](docs/Screenshots-Document.docx)
 - Diagrams (PNG): [docs/diagrams](docs/diagrams)

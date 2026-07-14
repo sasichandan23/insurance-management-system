@@ -1,0 +1,27 @@
+# Render Blueprint — deploys the Spring Boot backend as a free Docker web service.
+# The MySQL database is external (e.g. TiDB Cloud Serverless or Aiven — both free).
+# In the Render dashboard: New → Blueprint → connect this repo → fill the env vars below.
+services:
+  - type: web
+    name: ims-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    healthCheckPath: /v3/api-docs
+    envVars:
+      # JDBC URL of your free managed MySQL, e.g.
+      # jdbc:mysql://<host>:<port>/insurance_db?sslMode=REQUIRE&serverTimezone=UTC
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      # Comma-separated allowed origins — set to your Vercel frontend URL, e.g.
+      # https://ims-frontend.vercel.app
+      - key: APP_CORS_ALLOWED_ORIGINS
+        sync: false
+      # A strong random JWT signing key (32+ chars) — Render generates one for you
+      - key: APP_JWT_SECRET
+        generateValue: true
