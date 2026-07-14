@@ -54,7 +54,7 @@ insurance-management-system/
 ### Backend
 ```bash
 cd backend
-mvnw spring-boot:run          # Windows (use ./mvnw on Linux/macOS)
+.\mvnw.cmd spring-boot:run        # Windows (use ./mvnw on Linux/macOS)
 ```
 - API base URL: `http://localhost:8081/api`
 - Swagger UI (interactive API documentation): `http://localhost:8081/swagger-ui.html`
